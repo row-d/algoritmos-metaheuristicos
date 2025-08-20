@@ -1,28 +1,57 @@
-import sys
+import typer
+from typing import Annotated
 from NQueen import NQueen
 
+app = typer.Typer()
 
-def main():
-    if len(sys.argv) > 1:
-        seed = float(sys.argv[1])
-        n = int(sys.argv[2])
-        population_size = int(sys.argv[3])
-        crossover_rate = float(sys.argv[4])
-        mutation_rate = float(sys.argv[5])
-        iterations = int(sys.argv[6])
 
-        nqueen = NQueen(
-            seed, n, population_size, crossover_rate, mutation_rate, iterations
-        )
-        nqueen.start()
-
-    else:
-        print(
-            "Usage: python main.py <seed> <n> <population_size> <crossover_rate> <mutation_rate> <iterations>"
-        )
-        print("Example: python main.py 42 8 100 0.7 0.01 1000")
-        sys.exit(1)
+@app.command()
+def n_queen(
+    seed: Annotated[
+        int,
+        typer.Argument(
+            help="Semilla para la generación de números aleatorios.",
+        ),
+    ],
+    n: Annotated[
+        int,
+        typer.Argument(
+            help="Número de reinas y tamaño del tablero (NxN).",
+            callback=lambda x: x > 3 or typer.Exit("El número de reinas debe ser mayor a 3."),
+        ),
+    ],
+    population_size: Annotated[
+        int,
+        typer.Argument(
+            help="Tamaño de la población en cada generación. Valores típicos: 50-200."
+        ),
+    ],
+    crossover_rate: Annotated[
+        float,
+        typer.Argument(
+            help="Probabilidad de cruzamiento entre individuos [0-1].",
+            callback=lambda x: 0 <= x <= 1 or typer.Exit("La tasa de cruzamiento debe estar entre 0 y 1."),
+        ),
+    ],
+    mutation_rate: Annotated[
+        float,
+        typer.Argument(
+            help="Probabilidad de mutación de un individuo [0-1].",
+            callback=lambda x: 0 <= x <= 1 or typer.Exit("La tasa de mutación debe estar entre 0 y 1."),
+        ),
+    ],
+    iterations: Annotated[
+        int,
+        typer.Argument(
+            help="Número máximo de generaciones a ejecutar.",
+            callback=lambda x: x > 0 or typer.Exit("El número de iteraciones debe ser mayor a 0.")
+        ),
+    ],
+):
+    """Resuelve el problema de las N-Reinas usando algoritmos genéticos."""
+    nqueen = NQueen(seed, n, population_size, crossover_rate, mutation_rate, iterations)
+    nqueen.start()
 
 
 if __name__ == "__main__":
-    main()
+    app()

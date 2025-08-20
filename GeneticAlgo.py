@@ -34,7 +34,6 @@ class GeneticAlgo[T](ABC):
 
     @abstractmethod
     def generate_population(self) -> list[T]:
-
         ...
         
     @abstractmethod
