@@ -56,7 +56,7 @@ class NQueen(GeneticAlgo[list[int]]):
         self.__swap(individual, i, j)
         return individual
 
-    @on('new_individual')
+    # @on('new_individual')
     def new_individual(
         self, generation: int, individual: list[int], fitness: float | int
     ):
@@ -103,7 +103,7 @@ class NQueen(GeneticAlgo[list[int]]):
         max_generations_reached = self.gen >= self.iterations
         return has_solution or max_generations_reached
 
-    @on('end')
+    # @on('end')
     def on_end(self):
         """Imprime el mejor resultado al final del algoritmo"""
         best_fitness = min(self.pop_fitness)
