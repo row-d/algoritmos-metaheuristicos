@@ -3,7 +3,6 @@ from src.core.EventEmitter import on
 from src.utils.print_chessboard import print_chessboard
 import random
 
-
 class NQueen(GeneticAlgo[list[int]]):
     n: int
     iterations: int
@@ -103,7 +102,7 @@ class NQueen(GeneticAlgo[list[int]]):
         max_generations_reached = self.gen >= self.iterations
         return has_solution or max_generations_reached
 
-    # @on('end')
+    @on('end')
     def on_end(self):
         """Imprime el mejor resultado al final del algoritmo"""
         best_fitness = min(self.pop_fitness)
