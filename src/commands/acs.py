@@ -6,7 +6,6 @@ import numpy as np
 
 app = typer.Typer()
 
-
 @app.command(name="acs")
 def ant_colony_system(
     filename: Annotated[

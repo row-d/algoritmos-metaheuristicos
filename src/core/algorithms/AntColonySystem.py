@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 import numpy as np
 import numpy.typing as npt
+import math
 
 
 @dataclass
@@ -119,12 +120,13 @@ class AntColonySystem(ABC):
 
             new_best = self.get_best(colony)
             if self.cost(new_best) < self.cost(best_solution):
-                print(
-                    f"Nueva mejor solución encontrada en iteración {self.it} con costo {self.cost(new_best)}")
                 best_solution = new_best
-
             self.pheromones = self.update_global_pheromone(best_solution)
             self.it += 1
 
-        print(f"Mejor solución final: costo = {self.cost(best_solution)}")
+            cost = self.cost(best_solution)
+            print("Iteración", self.it,
+                  "Mejor costo hasta ahora:", cost)
+
+        print(f"Mejor solución final: costo = {cost}")
         return best_solution
