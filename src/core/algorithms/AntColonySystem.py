@@ -68,7 +68,7 @@ class AntColonySystem(ABC):
 
     def update_global_pheromone(self, best_solution: npt.NDArray) -> npt.NDArray:
         pheromones = (1 - self.alpha) * self.pheromones
-        for i in range(len(best_solution)):
+        for i in range(len(self.nodes)):
             j = best_solution[i]
             k = best_solution[i - 1]
             pheromones[j, k] += self.alpha / self.cost(best_solution)
@@ -79,8 +79,8 @@ class AntColonySystem(ABC):
 
     def start(self) -> npt.NDArray:
         n = len(self.nodes)
-        best_solution = np.random.permutation(n)
-        self.Tij0 = 1 / (n * self.cost(best_solution))
+        self.best_solution = np.random.permutation(n)
+        self.Tij0 = 1 / (n * self.cost(self.best_solution))
         self.pheromones = np.full((n, n), self.Tij0, dtype=np.float64)
 
         # Corregir cálculo de heurísticas
@@ -119,14 +119,8 @@ class AntColonySystem(ABC):
                     last_node, first_node)
 
             new_best = self.get_best(colony)
-            if self.cost(new_best) < self.cost(best_solution):
-                best_solution = new_best
-            self.pheromones = self.update_global_pheromone(best_solution)
+            if self.cost(new_best) < self.cost(self.best_solution):
+                self.best_solution = new_best
+            self.pheromones = self.update_global_pheromone(self.best_solution)
             self.it += 1
-
-            cost = self.cost(best_solution)
-            print("Iteración", self.it,
-                  "Mejor costo hasta ahora:", cost)
-
-        print(f"Mejor solución final: costo = {cost}")
-        return best_solution
+        return self.best_solution

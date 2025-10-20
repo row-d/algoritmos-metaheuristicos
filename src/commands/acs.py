@@ -2,7 +2,7 @@ from pathlib import Path
 import typer
 from typing import Annotated
 from src.core.algorithms.AntColonySystem import AntColonySystem
-import numpy as np
+from src.utils.tsp_parser import parse_tsp_file
 
 app = typer.Typer()
 
@@ -50,17 +50,8 @@ def ant_colony_system(
     """Solucionador del problema del agente viajero usando el sistema de colonia de hormigas.
     """
 
-    with open(filename, 'r') as file:
-        def get_meta(
-            line: str) -> list[str]: return line.strip().split(": ")[1]
-
-        _name, _type, _comment, _dimension, _edge_weight_type = [
-            get_meta(file.readline()) for _ in range(5)]
-
-        file.readline()  # Skip the "NODE_COORD_SECTION" line
-
-        path = np.array([np.array([float(x), float(y)]) for _, x, y in (file.readline().strip().split(" ")
-                                                                        for _ in range(int(_dimension)))])
+    # Parsear el archivo TSP para obtener las coordenadas de las ciudades
+    path = parse_tsp_file(filename)
 
     acs = AntColonySystem(seed, ant_colony_size, alpha,
                           beta, q0, iterations, path)
