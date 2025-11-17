@@ -15,7 +15,7 @@ class AntColonySystem(ABC):
     max_iterations: int
     nodes: npt.NDArray
     it: int = 0
-
+    
     def __post_init__(self):
         np.random.seed(self.seed)
 

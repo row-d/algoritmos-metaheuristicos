@@ -1,4 +1,4 @@
-# Algoritmos Metaheurísticos
+ # Algoritmos Metaheurísticos
 
 Este proyecto implementa varios **algoritmos metaheurísticos** para resolver problemas de optimización combinatoria usando Python. Incluye implementaciones de **Algoritmo Genético** para el problema de las N-Reinas y **Sistema de Colonia de Hormigas (ACS)** para el Problema del Agente Viajero (TSP).
 
