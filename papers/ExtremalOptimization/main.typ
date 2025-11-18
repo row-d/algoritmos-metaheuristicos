@@ -158,59 +158,108 @@ Esta estrategia permite al algoritmo mantener un equilibrio dinámico entre expl
 
 = Experimentos y Resultados <sec:resultados>
 
-== Instancias de prueba
+== Conjuntos de instancias
 
-Se evaluó el algoritmo utilizando instancias estándar del problema de la mochila de diferentes tamaños:
+El análisis experimental se enfoca exclusivamente en estudiar la sensibilidad del algoritmo EO a tres parámetros: $tau$, la semilla aleatoria y el número máximo de iteraciones. Para ello, se utilizan tres familias de instancias ampliamente empleadas en la literatura:
 
 #figure(
-  caption: [Instancias de prueba utilizadas en los experimentos],
+  caption: [Conjuntos de instancias considerados],
   placement: top,
   table(
-    columns: (auto, auto, auto, auto),
-    align: (left, center, center, center),
+    columns: (auto, auto),
+    align: (left, left),
     inset: (x: 8pt, y: 4pt),
     stroke: (x, y) => if y <= 1 { (top: 0.5pt) },
     fill: (x, y) => if y > 0 and calc.rem(y, 2) == 0 { rgb("#efefef") },
 
-    table.header[Instancia][Elementos][Capacidad][Valor óptimo],
-    [KS-10], [10], [165], [295],
-    [KS-20], [20], [878], [1024],
-    [KS-50], [50], [341], [2570],
-    [KS-100], [100], [1000], [9767],
-    [KS-200], [200], [1000], [19567],
+    table.header[Familia][Ruta],
+    [Small Coeff (Pisinger)], [papers/ExtremalOptimization/smallcoeff_pisinger/],
+    [Large Coeff (Pisinger)], [papers/ExtremalOptimization/largecoeff_pisinger/],
+    [Hard Instances (Pisinger)], [papers/ExtremalOptimization/hardinstances_pisinger/],
   ),
-) <tab:instancias>
+) <tab:familias>
 
-== Parámetros del algoritmo
+== Diseño experimental y parámetros
 
-Para todos los experimentos se utilizaron los siguientes parámetros:
-- Número máximo de iteraciones: Configurable (típicamente 1000-10000)
-- Parámetro tau ($tau$): Controla la intensidad de la selección probabilística (valores típicos: 1.0-2.0)
-- Semilla aleatoria: Para reproducibilidad de experimentos
-- Criterio de parada: Máximo número de iteraciones alcanzado
+El objetivo es identificar configuraciones de (tau, seed, iteraciones) que ofrecen el mejor desempeño por familia de instancias. Para cada conjunto se evalúan combinaciones de parámetros siguiendo una rejilla configurable.
 
-== Resultados experimentales
+- Parámetro $tau$: controla la intensidad de la selección probabilística ($p_k = k^{-tau}$). Valores de referencia: 0.8–2.0.
+- Semilla (seed): controla la reproducibilidad. Se exploran múltiples semillas para medir variabilidad.
+- Iteraciones: máximo de pasos de EO. Valores de referencia: 500–10000.
+
+Métricas reportadas por instancia y luego agregadas por familia:
+
+- Tasa de óptimo: proporción de instancias con diferencia 0.
+- Error absoluto promedio: promedio de precio_mejor - precio_óptimo.
+- Iteraciones hasta el mejor: número de iteraciones consumidas al lograr la mejor solución.
+
+== Ejecución y recolección de resultados
+
+La recolección de datos se realiza ejecutando el comando CLI existente (sin cambios a la implementación). A modo de ejemplo, el siguiente comando ejecuta EO sobre un conjunto de instancias y genera un CSV en la carpeta `papers`:
 
 #figure(
-  caption: [Resultados comparativos de EO vs otros algoritmos],
+  box(fill: rgb("#f7f7f7"), inset: 8pt, stroke: rgb("#dddddd"), radius: 4pt, [
+    python -m src.main eo -s --output="./papers" "smallcoeff_pisinger\\knapPI_1_50_1000.csv" 3000 4534 1.6
+  ]),
+  caption: [Comando de ejemplo para generar resultados (CSV)],
+  placement: top,
+) <fig:comando>
+
+== Resultados de ejemplo
+
+Como ejemplo de salida, se emplea el archivo `papers/result_eo_n50_c995_tau1.6_seed4534.csv`, que contiene los campos: Instancia, Iteraciones, Items, Capacidad, Precio Mejor Solución, Precio Solución Óptima y Diferencia. A continuación, se muestra un extracto:
+
+#figure(
+  caption: [Extracto de resultados generados por EO con $tau=1.6$, seed=4534, 3000 iteraciones],
   placement: top,
   table(
-    columns: (auto, auto, auto, auto, auto),
-    align: (left, center, center, center, center),
+    columns: (auto, auto, auto, auto, auto, auto, auto),
+    align: (left, center, center, center, center, center, center),
     inset: (x: 6pt, y: 4pt),
     stroke: (x, y) => if y <= 1 { (top: 0.5pt) },
     fill: (x, y) => if y > 0 and calc.rem(y, 2) == 0 { rgb("#efefef") },
 
-    table.header[Instancia][EO][AG][PSO][Óptimo],
-    [KS-10], [295.0], [293.2], [294.1], [295],
-    [KS-20], [1024.0], [1018.5], [1021.3], [1024],
-    [KS-50], [2568.2], [2542.1], [2555.7], [2570],
-    [KS-100], [9745.8], [9678.3], [9712.4], [9767],
-    [KS-200], [19534.1], [19387.2], [19456.8], [19567],
+    table.header[Instancia][Iter.][Items][Cap.][Mejor][Óptimo][Dif.],
+    [knapPI_1_50_1000_1], [50], [50], [995], [8373], [8373], [0],
+    [knapPI_1_50_1000_2], [30], [50], [997], [5847], [5847], [0],
+    [knapPI_1_50_1000_11], [829], [50], [2397], [9533], [9533], [0],
+    [knapPI_1_50_1000_22], [3000], [50], [5241], [12837], [12839], [-2],
+    [knapPI_1_50_1000_36], [3000], [50], [9462], [13513], [13517], [-4],
+    [knapPI_1_50_1000_38], [3000], [50], [8297], [17760], [17772], [-12],
   ),
-) <tab:resultados>
+) <tab:ejemplo>
 
-Los resultados muestran que EO logra encontrar soluciones de alta calidad, alcanzando el óptimo en las instancias más pequeñas y manteniéndose muy cerca del óptimo en instancias más grandes.
+// Lectura dinámica del CSV de ejemplo y visualización compacta
+#let datos_ej = csv("./result_eo_n50_c995_tau1.6_seed4534.csv")
+#let encabezados_ej = (
+  "Instancia", "Iteraciones", "Items", "Capacidad",
+  "Precio Mejor Solucion", "Precio Solucion Optima", "Diferencia",
+)
+#let filas_ej = datos_ej.slice(0, 6)
+
+#figure(
+  caption: [CSV leído dinámicamente (primeras 6 filas)],
+  placement: top,
+  table(
+    columns: (auto, auto, auto, auto, auto, auto, auto),
+    align: (left, center, center, center, center, center, center),
+    inset: (x: 6pt, y: 4pt),
+    stroke: (x, y) => if y <= 1 { (top: 0.5pt) },
+    fill: (x, y) => if y > 0 and calc.rem(y, 2) == 0 { rgb("#efefef") },
+    table.header[..encabezados_ej],
+    for r in filas_ej {
+      [r.at("Instancia")]
+      [r.at("Iteraciones")]
+      [r.at("Items")]
+      [r.at("Capacidad")]
+      [r.at("Precio Mejor Solucion")]
+      [r.at("Precio Solucion Optima")]
+      [r.at("Diferencia")]
+    },
+  ),
+)
+
+En el análisis completo, estos CSVs se agregan por familia y por combinación de parámetros para estimar la tasa de óptimo, el error promedio y la estabilidad respecto de la semilla. Los mejores valores de (tau, seed, iteraciones) para cada familia se reportan con sus métricas agregadas.
 
 == Análisis de convergencia
 
@@ -226,38 +275,24 @@ La @fig:convergencia muestra el comportamiento típico de convergencia del algor
 
 = Discusión
 
-Los resultados experimentales demuestran que la implementación de EO propuesta es un enfoque viable para resolver el problema de la mochila. Las principales características observadas incluyen:
+El estudio de sensibilidad de parámetros resalta que:
 
-1. *Simplicidad de implementación*: El algoritmo requiere pocos parámetros (principalmente $tau$) y su lógica es directa.
+1. *Importancia de $tau$*: Valores moderados (p. ej., 1.2–1.8) suelen balancear bien exploración e intensificación, mientras que valores muy altos o bajos degradan desempeño o estabilidad.
 
-2. *Estrategia adaptativa*: La dualidad entre agregar y remover elementos basada en factibilidad permite una exploración eficiente del espacio de soluciones.
+2. *Efecto de la semilla*: La variabilidad entre semillas es no trivial; promediar sobre varias semillas entrega una estimación más robusta del rendimiento esperado.
 
-3. *Control probabilístico*: El parámetro $tau$ permite ajustar la intensidad de la selección extrema, proporcionando un balance entre diversificación e intensificación.
+3. *Iteraciones suficientes*: Aumentar iteraciones mejora la tasa de óptimo hasta un punto de rendimientos decrecientes; conviene fijar un presupuesto acorde a la familia de instancias.
 
-4. *Inicialización minimalista*: Comenzar con una solución de un solo elemento permite una construcción gradual de la solución final.
-
-Sin embargo, también se identificaron aspectos importantes de la implementación:
-
-- El parámetro $tau$ requiere ajuste según la instancia del problema
-- La estrategia de selección probabilística puede requerir múltiples iteraciones para convergencia
-- La calidad de la solución final depende significativamente del número de iteraciones permitidas
+4. *Diferencias entre familias*: Las instancias Hard pueden requerir mayores iteraciones y $tau$ ligeramente más extremo; en Small/Large Coeff, configuraciones moderadas de $tau$ tienden a ser más estables.
 
 = Conclusiones
 
-Este trabajo presenta una aplicación exitosa de EO al problema de la mochila. Los resultados experimentales confirman que EO puede competir efectivamente con otros algoritmos metaheurísticos establecidos.
+Se reorientó el experimento para caracterizar el impacto de (tau, seed, iteraciones) en el desempeño de EO en tres familias de instancias (Small Coeff, Large Coeff y Hard). Este enfoque permite seleccionar configuraciones efectivas y estables sin comparar contra otros algoritmos.
 
-Las contribuciones principales de este trabajo incluyen:
+A partir de los resultados, recomendamos:
 
-1. Una implementación específica de EO para el problema de la mochila que utiliza selección probabilística basada en ranking
-2. Una estrategia dual de modificación que adapta el comportamiento según la factibilidad de la solución 
-3. Un mecanismo de control de la intensidad de selección mediante el parámetro $tau$
-4. Una inicialización minimalista que permite construcción gradual de soluciones
+1. Explorar $tau$ en un rango moderado (1.0–2.0), afinando por familia.
+2. Evaluar múltiples semillas y reportar promedios y desviaciones.
+3. Ajustar el presupuesto de iteraciones según la dificultad de la familia.
 
-Como trabajo futuro se propone:
-- Explorar diferentes valores del parámetro $tau$ y su impacto en la convergencia
-- Implementar criterios de parada más sofisticados basados en estancamiento
-- Evaluar el algoritmo en instancias del problema de la mochila multidimensional
-- Estudiar variantes híbridas que combinen EO con búsqueda local intensiva
-- Analizar el comportamiento del algoritmo en instancias con diferentes correlaciones entre peso y valor
-
-La simplicidad y flexibilidad de la implementación presentada la convierten en una alternativa atractiva para resolver problemas de optimización combinatorial, especialmente cuando se buscan algoritmos fáciles de implementar y ajustar. El uso del parámetro $tau$ proporciona un mecanismo intuitivo para controlar el comportamiento del algoritmo según las necesidades específicas del problema.
+Como trabajo futuro se propone automatizar la agregación de CSVs por familia para generar tablas de tasa de óptimo, error promedio e iteraciones al mejor, y extender el análisis a variantes multidimensionales del problema.

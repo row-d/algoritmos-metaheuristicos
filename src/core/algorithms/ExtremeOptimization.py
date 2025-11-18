@@ -13,6 +13,8 @@ class ExtremeOptimization:
     precios: npt.NDArray[np.int32]
     pesos: npt.NDArray[np.int32]
     max_iterations: int = 1
+    iterations: int = 1
+    optimal_solution: int | None = None
 
     def __post_init__(self):
         np.random.seed(self.seed)
@@ -22,7 +24,7 @@ class ExtremeOptimization:
         fitness: npt.NDArray[np.float64] = self.precios / self.pesos
         best_sol: npt.NDArray[np.int32] = solution.copy()
 
-        for _ in range(self.max_iterations):
+        for i in range(1,self.max_iterations+1):
             alcanza_capacidad = np.sum(
                 self.pesos[solution == 1]) <= self.capacidad
 
@@ -35,9 +37,11 @@ class ExtremeOptimization:
             precio_mejor_sol = np.sum(best_sol * self.precios)
             alcanza_capacidad = np.sum(
                 self.pesos[solution == 1]) <= self.capacidad
-
+            self.iterations = i
             if alcanza_capacidad and precio_sol > precio_mejor_sol:
                 best_sol = solution.copy()
+                if self.optimal_solution is not None and precio_sol == self.optimal_solution:
+                    break
 
         return best_sol, np.sum(best_sol * self.precios, dtype=int)
 
