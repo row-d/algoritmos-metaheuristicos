@@ -58,7 +58,7 @@ def extreme_optimization(
     """
 
     instances = knapack_parser(filepath)
-    filename = f"result_eo_n{instances[0]['n']}_c{instances[0]['c']}_tau{tau}_seed{seed}.csv"
+    filename = f"result_eo_n{instances[0]['n']}_i{iterations}_c{instances[0]['c']}_tau{tau}_seed{seed}.csv"
     output_file = open(folder_output / filename,
                        "w") if folder_output is not None else None
     if output_file:
