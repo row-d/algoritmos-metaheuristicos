@@ -4,6 +4,8 @@ __pycache__
 *.tsp
 *.log
 *.pdf
+notebooks/*
+!notebooks/*.ipynb
 papers/*
 !papers/*.typ
 !papers/*.bib
