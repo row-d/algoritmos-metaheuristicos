@@ -1,4 +1,4 @@
- # Algoritmos Metaheurísticos
+# Algoritmos Metaheurísticos
 
 Este proyecto implementa varios **algoritmos metaheurísticos** para resolver problemas de optimización combinatoria usando Python. Incluye implementaciones de **Algoritmo Genético** para el problema de las N-Reinas y **Sistema de Colonia de Hormigas (ACS)** para el Problema del Agente Viajero (TSP).
 
@@ -143,6 +143,39 @@ NODE_COORD_SECTION
 ...
 ```
 
+### 🎒 Problema de la Mochila (Optimización Extrema)
+
+#### Comando básico
+
+```bash
+python -m src.main eo <archivo_instancias> <iteraciones> <semilla> <tau> [opciones]
+```
+
+#### Parámetros
+
+| Parámetro            | Tipo  | Descripción                                                            |
+| -------------------- | ----- | ---------------------------------------------------------------------- |
+| `archivo_instancias` | Path  | Ruta al archivo CSV con las instancias del problema                    |
+| `iteraciones`        | int   | Número máximo de iteraciones a ejecutar                                |
+| `semilla`            | int   | Semilla para la generación de números aleatorios                       |
+| `tau`                | float | Parámetro tau para la selección de componentes (típicamente 1.0 - 2.0) |
+| `--output`, `-o`     | Path  | (Opcional) Ruta de la carpeta para guardar resultados en CSV           |
+| `--silent`, `-s`     | Flag  | (Opcional) Si se activa, no imprime resultados en consola              |
+
+#### Ejemplos de uso
+
+##### Ejecución básica
+
+```bash
+python -m src.main eo notebooks/hardinstances_pisinger/knapPI_11_100_1000.csv 1000 42 1.4
+```
+
+##### Guardando resultados en archivo
+
+```bash
+python -m src.main eo notebooks/hardinstances_pisinger/knapPI_11_100_1000.csv 5000 123 1.6 -o ./resultados
+```
+
 ## 🏗️ Estructura del proyecto
 
 ```
@@ -193,6 +226,17 @@ algoritmos-metaheuristicos/
 - Regla de transición pseudo-aleatoria proporcional
 - Información heurística basada en distancia
 - Balance entre explotación y exploración
+
+### 3. Optimización Extrema (EO)
+
+**Problema:** Problema de la Mochila (Knapsack Problem)
+
+**Descripción:** Selecciona un subconjunto de elementos con pesos y valores dados para maximizar el valor total sin exceder la capacidad de la mochila.
+
+**Características especiales:**
+- Enfoque basado en mejorar la peor componente
+- Parámetro $\tau$ para controlar la selección probabilística
+- Capacidad de escapar de óptimos locales
 
 ## 🔬 Ejemplos de Resultados
 

@@ -118,6 +118,8 @@ La elección apropiada de $tau$ depende de las características del problema y d
 
 === Procedimiento principal
 
+El pseudocódigo del algoritmo se detalla en la @fig:algoritmo.
+
 #figure(
   pseudocode-list(
     booktabs: true,
@@ -167,6 +169,12 @@ Esta estrategia permite al algoritmo mantener un equilibrio dinámico entre expl
 
 = Experimentos y Resultados <sec:resultados>
 
+El objetivo es identificar configuraciones de (tau, seed, iteraciones) que ofrecen el mejor desempeño por familia de instancias. Para cada conjunto se evalúan combinaciones de parámetros siguiendo una rejilla configurable.
+
+- Parámetro $tau$: controla la intensidad de la selección probabilística ($p_k = k^{-tau}$). Valores de referencia: 0.8–2.0.
+- Semilla (seed): controla la reproducibilidad. Se exploran múltiples semillas para medir variabilidad.
+- Iteraciones: máximo de pasos de EO. Valores de referencia: 500–10000.
+
 == Conjuntos de instancias
 
 El análisis experimental se enfoca exclusivamente en estudiar la sensibilidad del algoritmo EO a tres parámetros: $tau$, la semilla aleatoria y el número máximo de iteraciones. Para ello, se utilizan tres familias de instancias ampliamente empleadas en la literatura @pisinger2005:
@@ -174,6 +182,7 @@ El análisis experimental se enfoca exclusivamente en estudiar la sensibilidad d
 
 
 == Diseño experimental y parámetros
+
 
 El objetivo es identificar configuraciones de (tau, seed, iteraciones) que ofrecen el mejor desempeño por familia de instancias. Para cada conjunto se evalúan combinaciones de parámetros siguiendo una rejilla configurable.
 
@@ -196,9 +205,9 @@ En el análisis posterior, estos resultados se agregaron por familia y por combi
 
 == Análisis de convergencia y desempeño
 
-A continuación se presentan los gráficos de evolución del ratio promedio (calidad) respecto a las iteraciones reales promedio consumidas, para diferentes valores de $tau$.
+A continuación se presentan los gráficos de evolución del ratio promedio (calidad) respecto a las iteraciones reales promedio consumidas, para diferentes valores de $tau$. La @fig:small_iter muestra los resultados para instancias Small, la @fig:large_iter para instancias Large, y la @fig:hard_iter para instancias Hard.
 
-#let plot_ratio_iter(data_path, title_text, x_step: 1000, show_marks: false) = {
+#let plot_ratio_iter(data_path, title_text, x_step: 1000, show_marks: false, x_max:3000, x_min:500) = {
   let raw_data = csv(data_path)
   // Skip header
   let data = raw_data.slice(1)
@@ -221,7 +230,8 @@ A continuación se presentan los gráficos de evolución del ratio promedio (cal
         y-label: "Ratio Promedio (Mejor/Óptimo)",
         title: title_text,
         legend: "inner-south-east",
-        y-min: 0.99, y-max: 1.0005, // Zoom to high quality area
+        y-min: 0.6, y-max: 1.1,x-max:x_max, x-min:x_min, // Zoom to high quality area
+        
         {
           let colors = (red, blue, green, orange, purple, black)
           for (i, t) in taus.enumerate() {
@@ -237,15 +247,15 @@ A continuación se presentan los gráficos de evolución del ratio promedio (cal
   )
 }
 
-#plot_ratio_iter("agg_small.csv", "Instancias Small")
-#plot_ratio_iter("agg_large.csv", "Instancias Large")
-#plot_ratio_iter("agg_hard.csv", "Instancias Hard", x_step: 50, show_marks: true)
+#plot_ratio_iter("agg_small.csv", "Instancias Small") <fig:small_iter>
+#plot_ratio_iter("agg_large.csv", "Instancias Large") <fig:large_iter>
+#plot_ratio_iter("agg_hard.csv", "Instancias Hard", x_step: 20, show_marks: true,x_max:180,x_min:110) <fig:hard_iter>
 
 
 
 == Análisis de variabilidad
 
-Para complementar el análisis de promedios, se presenta la distribución de la calidad de las soluciones (Ratio) para diferentes valores de $tau$, utilizando diagramas de caja simplificados (min, Q1, mediana, Q3, max). Esto permite visualizar la estabilidad del algoritmo.
+Para complementar el análisis de promedios, se presenta la distribución de la calidad de las soluciones (Ratio) para diferentes valores de $tau$, utilizando diagramas de caja simplificados (min, Q1, mediana, Q3, max). Esto permite visualizar la estabilidad del algoritmo, como se observa en las figuras @fig:small_box, @fig:large_box y @fig:hard_box para las respectivas familias de instancias.
 
 #let boxplot_graph(data_path, title_text) = {
   let raw_data = csv(data_path)
@@ -277,9 +287,9 @@ Para complementar el análisis de promedios, se presenta la distribución de la 
   )
 }
 
-#boxplot_graph("box_small.csv", "Instancias Small (1000 iter)")
-#boxplot_graph("box_large.csv", "Instancias Large (1000 iter)")
-#boxplot_graph("box_hard.csv", "Instancias Hard (500 iter)")
+#boxplot_graph("box_small.csv", "Instancias Small (1000 iter)") <fig:small_box>
+#boxplot_graph("box_large.csv", "Instancias Large (1000 iter)") <fig:large_box>
+#boxplot_graph("box_hard.csv", "Instancias Hard (500 iter)") <fig:hard_box>
 
 = Discusión
 
@@ -316,8 +326,8 @@ A partir de los resultados y el análisis de iteraciones, se concluye:
     [Hard],  [1.8], [500],  [~118],  [Convergencia más rápida al óptimo],
   ),
   caption: [Recomendación de parámetros basada en eficiencia]
-)
+) <tab:recomendaciones>
 
-El uso de *iteraciones* como métrica de costo confirma que no es necesario sobre-dimensionar `max_iterations` para obtener resultados de alta calidad en estos conjuntos de datos.
+La @tab:recomendaciones resume las configuraciones sugeridas. El uso de *iteraciones* como métrica de costo confirma que no es necesario sobre-dimensionar `max_iterations` para obtener resultados de alta calidad en estos conjuntos de datos.
 
 Como trabajo futuro se propone extender el análisis a variantes multidimensionales del problema y evaluar el impacto del tiempo de cómputo (tiempo real de ejecución).
