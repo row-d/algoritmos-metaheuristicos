@@ -9,3 +9,5 @@ notebooks/*
 papers/*
 !papers/*.typ
 !papers/*.bib
+dist
+*.egg-info

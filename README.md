@@ -1,29 +1,46 @@
 # Algoritmos Metaheurísticos
 
-Este proyecto implementa varios **algoritmos metaheurísticos** para resolver problemas de optimización combinatoria usando Python. Incluye implementaciones de **Algoritmo Genético** para el problema de las N-Reinas y **Sistema de Colonia de Hormigas (ACS)** para el Problema del Agente Viajero (TSP).
+Este proyecto implementa varios **algoritmos metaheurísticos** para resolver problemas de optimización combinatoria usando Python. Incluye implementaciones de **Algoritmo Genético** para el problema de las N-Reinas, **Sistema de Colonia de Hormigas (ACS)** para el Problema del Agente Viajero (TSP) y **Optimización Extrema (EO)** para el Problema de la Mochila.
 
-## 🎯 Características
+## Características
 
 ### Algoritmo Genético (N-Reinas)
-- ✅ Implementación completa de algoritmo genético
-- ✅ Soporte para tableros de cualquier tamaño (N > 3)
-- ✅ Visualización del tablero final con las reinas colocadas
-- ✅ Parámetros configurables (población, mutación, cruzamiento)
-- ✅ Soporte para elitismo
-- ✅ Múltiples métodos de selección (ruleta, torneo determinístico/probabilístico)
+- Implementación completa de algoritmo genético
+- Soporte para tableros de cualquier tamaño (N > 3)
+- Visualización del tablero final con las reinas colocadas
+- Parámetros configurables (población, mutación, cruzamiento)
+- Soporte para elitismo
+- Múltiples métodos de selección (ruleta, torneo determinístico/probabilístico)
 
 ### Sistema de Colonia de Hormigas (TSP)
-- ✅ Implementación del algoritmo ACS (Ant Colony System)
-- ✅ Soporte para archivos en formato TSPLIB
-- ✅ Parámetros configurables (α, β, q₀, tamaño de colonia)
-- ✅ Actualización local y global de feromonas
-- ✅ Seguimiento del progreso iteración por iteración
+- Implementación del algoritmo ACS (Ant Colony System)
+- Soporte para archivos en formato TSPLIB
+- Parámetros configurables (α, β, q₀, tamaño de colonia)
+- Actualización local y global de feromonas
+- Seguimiento del progreso iteración por iteración
 
-## 🚀 Instalación
+### Optimización Extrema (Mochila)
+- Implementación del algoritmo de Optimización Extrema (EO)
+- Soporte para instancias de Pisinger (archivos CSV)
+- Parámetro τ (tau) configurable para la selección de componentes
+- Generación de reportes en CSV
+- Comparación automática con soluciones óptimas conocidas
+
+## Instalación
+
+### Opción 1: Instalación vía pip (Recomendado)
+
+Puedes instalar la librería directamente desde PyPI:
+
+```bash
+pip install algometa
+```
+
+### Opción 2: Instalación para desarrollo
 
 ### Prerrequisitos
 
-- **Python 3.8+** instalado en tu sistema
+- **Python 3.12+** instalado en tu sistema
 - **pip** (incluido con Python)
 
 ### 1. Clonar el repositorio
@@ -39,16 +56,20 @@ cd algoritmos-metaheuristicos
 pip install -r requirements.txt
 ```
 
-## 💻 Uso
+## Uso
 
-El proyecto incluye dos comandos principales: uno para resolver el problema de las N-Reinas usando algoritmos genéticos y otro para resolver el Problema del Agente Viajero usando el Sistema de Colonia de Hormigas.
+El proyecto incluye tres comandos principales. Si instalaste el paquete vía pip, puedes usar el comando `algometa` directamente. Si estás trabajando con el código fuente, usa `python -m algometa.main`.
 
-### 🏃‍♀️ Problema de las N-Reinas (Algoritmo Genético)
+### Problema de las N-Reinas (Algoritmo Genético)
 
 #### Comando básico
 
 ```bash
-python -m src.main n-queen <semilla> <n_reinas> <población> <cruzamiento> <mutación> <generaciones>
+# Instalación vía pip
+algometa n-queen <semilla> <n_reinas> <población> <cruzamiento> <mutación> <generaciones>
+
+# Ejecución desde código fuente
+python -m algometa.main n-queen <semilla> <n_reinas> <población> <cruzamiento> <mutación> <generaciones>
 ```
 
 #### Parámetros
@@ -67,19 +88,19 @@ python -m src.main n-queen <semilla> <n_reinas> <población> <cruzamiento> <muta
 ##### Problema clásico de 8 reinas
 
 ```bash
-python -m src.main n-queen 42 8 100 0.8 0.1 1000
+algometa n-queen 42 8 100 0.8 0.1 1000
 ```
 
 ##### Problema más complejo (15 reinas)
 
 ```bash
-python -m src.main n-queen 999 15 100 0.99 0.01 500
+algometa n-queen 999 15 100 0.99 0.01 500
 ```
 
 ##### Prueba rápida (4 reinas)
 
 ```bash
-python -m src.main n-queen 123 4 50 0.7 0.2 100
+algometa n-queen 123 4 50 0.7 0.2 100
 ```
 
 #### Interpretación del fitness
@@ -94,19 +115,19 @@ Puedes activar el elitismo configurando la variable de entorno `ELITISMO`:
 
 ```bash
 # Windows
-$env:ELITISMO="True"; python -m src.main n-queen 42 8 100 0.8 0.1 1000
+$env:ELITISMO="True"; algometa n-queen 42 8 100 0.8 0.1 1000
 
 # macOS/Linux
 export ELITISMO=True
-python -m src.main n-queen 42 8 100 0.8 0.1 1000
+algometa n-queen 42 8 100 0.8 0.1 1000
 ```
 
-### 🐜 Problema del Agente Viajero (Sistema de Colonia de Hormigas)
+### Problema del Agente Viajero (Sistema de Colonia de Hormigas)
 
 #### Comando básico
 
 ```bash
-python -m src.main acs <archivo> <semilla> <tamaño_colonia> <iteraciones> <alpha> <beta> <q0>
+algometa acs <archivo> <semilla> <tamaño_colonia> <iteraciones> <alpha> <beta> <q0>
 ```
 
 #### Parámetros
@@ -124,7 +145,7 @@ python -m src.main acs <archivo> <semilla> <tamaño_colonia> <iteraciones> <alph
 #### Ejemplo de uso
 
 ```bash
-python -m src.main acs input.txt 42 20 500 0.1 2.0 0.9
+algometa acs input.txt 42 20 500 0.1 2.0 0.9
 ```
 
 #### Formato de archivo TSPLIB
@@ -143,12 +164,12 @@ NODE_COORD_SECTION
 ...
 ```
 
-### 🎒 Problema de la Mochila (Optimización Extrema)
+### Problema de la Mochila (Optimización Extrema)
 
 #### Comando básico
 
 ```bash
-python -m src.main eo <archivo_instancias> <iteraciones> <semilla> <tau> [opciones]
+algometa eo <archivo_instancias> <iteraciones> <semilla> <tau> [opciones]
 ```
 
 #### Parámetros
@@ -167,20 +188,20 @@ python -m src.main eo <archivo_instancias> <iteraciones> <semilla> <tau> [opcion
 ##### Ejecución básica
 
 ```bash
-python -m src.main eo notebooks/hardinstances_pisinger/knapPI_11_100_1000.csv 1000 42 1.4
+algometa eo notebooks/hardinstances_pisinger/knapPI_11_100_1000.csv 1000 42 1.4
 ```
 
 ##### Guardando resultados en archivo
 
 ```bash
-python -m src.main eo notebooks/hardinstances_pisinger/knapPI_11_100_1000.csv 5000 123 1.6 -o ./resultados
+algometa eo notebooks/hardinstances_pisinger/knapPI_11_100_1000.csv 5000 123 1.6 -o ./resultados
 ```
 
-## 🏗️ Estructura del proyecto
+## Estructura del proyecto
 
 ```
 algoritmos-metaheuristicos/
-├── src/
+├── algometa/
 │   ├── main.py                    # Punto de entrada del programa
 │   ├── commands/
 │   │   ├── acs.py                 # Comando para Sistema de Colonia de Hormigas
@@ -200,7 +221,7 @@ algoritmos-metaheuristicos/
 └── requirements.txt               # Dependencias del proyecto
 ```
 
-## 📊 Algoritmos Implementados
+## Algoritmos Implementados
 
 ### 1. Algoritmo Genético
 
@@ -238,7 +259,7 @@ algoritmos-metaheuristicos/
 - Parámetro $\tau$ para controlar la selección probabilística
 - Capacidad de escapar de óptimos locales
 
-## 🔬 Ejemplos de Resultados
+## Ejemplos de Resultados
 
 ### N-Reinas (8x8)
 ```
@@ -262,7 +283,7 @@ algoritmos-metaheuristicos/
 Fitness: 0 (Solución perfecta)
 ```
 
-## 📚 Referencias
+## Referencias
 
 - Dorigo, M., & Gambardella, L. M. (1997). Ant colony system: a cooperative learning approach to the traveling salesman problem.
 - Holland, J. H. (1992). Adaptation in natural and artificial systems.

@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "algometa"
 version = "0.0.1"
 dependencies = ["typer", "numpy"]
+scripts = { algometa = "algometa.main:app" }
 optional-dependencies = { dev = [
     "pandas",
     "matplotlib",
@@ -14,3 +15,7 @@ optional-dependencies = { dev = [
     "scipy",
     "statsmodels",
 ] }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["algometa*"]

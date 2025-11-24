@@ -8,7 +8,7 @@ import sys
 import os
 import itertools
 
-from src.problems.n_queen.NQueen import NQueen
+from algometa.problems.n_queen.NQueen import NQueen
 
 
 class TestWithElitism(unittest.TestCase):

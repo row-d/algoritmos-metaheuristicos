@@ -1,8 +1,8 @@
 from pathlib import Path
 import typer
 from typing import Annotated
-from src.core.algorithms.AntColonySystem import AntColonySystem
-from src.utils.tsp_parser import parse_tsp_file
+from algometa.core.algorithms.AntColonySystem import AntColonySystem
+from algometa.utils.tsp_parser import parse_tsp_file
 
 app = typer.Typer()
 

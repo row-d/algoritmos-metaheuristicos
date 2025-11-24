@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 import numpy.typing as npt
-from src.core.algorithms.selection.roulette import roulette
+from algometa.core.algorithms.selection.roulette import roulette
 
 
 @dataclass

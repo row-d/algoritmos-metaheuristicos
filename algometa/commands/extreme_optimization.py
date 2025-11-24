@@ -2,8 +2,8 @@ import typer
 from pathlib import Path
 import numpy as np
 from typing import Annotated, Optional
-from src.utils.knapack_parser import knapack_parser
-from src.core.algorithms.ExtremeOptimization import ExtremeOptimization
+from algometa.utils.knapack_parser import knapack_parser
+from algometa.core.algorithms.ExtremeOptimization import ExtremeOptimization
 
 app = typer.Typer()
 

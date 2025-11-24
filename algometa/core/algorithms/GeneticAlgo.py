@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import random
 import queue
-from src.core.EventEmitter import EventEmitter
+from algometa.core.EventEmitter import EventEmitter
 from typing import Callable, Any, Iterable
 
 

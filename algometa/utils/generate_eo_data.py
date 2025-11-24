@@ -6,8 +6,8 @@ import numpy as np
 from joblib import Parallel, delayed, parallel  # type: ignore
 from contextlib import contextmanager
 from tqdm import tqdm
-from src.core.algorithms.ExtremeOptimization import ExtremeOptimization
-from src.utils.knapack_parser import KnapdackData
+from algometa.core.algorithms.ExtremeOptimization import ExtremeOptimization
+from algometa.utils.knapack_parser import KnapdackData
 
 # Alias explícitos de tipos
 KnapInstance: TypeAlias = KnapdackData

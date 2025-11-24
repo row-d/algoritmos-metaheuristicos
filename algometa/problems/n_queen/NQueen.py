@@ -1,6 +1,6 @@
-from src.core.algorithms.GeneticAlgo import GeneticAlgo
-from src.core.EventEmitter import on
-from src.utils.print_chessboard import print_chessboard
+from algometa.core.algorithms.GeneticAlgo import GeneticAlgo
+from algometa.core.EventEmitter import on
+from algometa.utils.print_chessboard import print_chessboard
 import random
 
 class NQueen(GeneticAlgo[list[int]]):

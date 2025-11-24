@@ -1,6 +1,6 @@
 import typer
 import os
-from src.problems.n_queen.NQueen import NQueen
+from algometa.problems.n_queen.NQueen import NQueen
 from typing import Annotated
 
 app = typer.Typer()
