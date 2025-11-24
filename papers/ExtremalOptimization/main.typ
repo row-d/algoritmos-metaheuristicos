@@ -1,11 +1,15 @@
 #set text(lang: "es")
 #import "@preview/charged-ieee:0.1.4": ieee
 #import "@preview/lovelace:0.3.0": *
+#import "@preview/cetz:0.4.2"
+#import "@preview/cetz-plot:0.1.3": plot, chart
+
+
 
 #show: ieee.with(
   title: [Optimización Extrema aplicada al problema de la mochila],
   abstract: [
-    Este artículo presenta la aplicación del algoritmo de Optimización Extrema (EO) para resolver el problema clásico de la mochila. EO es una metaheurística inspirada en el concepto de criticalidad auto-organizada, que se caracteriza por realizar modificaciones probabilísticas extremas en las soluciones. Se implementa una variante que utiliza selección por ranking con parámetro de temperatura ($tau$) y una estrategia dual que adapta el comportamiento según la factibilidad de la solución actual. La implementación emplea una inicialización minimalista y un mecanismo de selección probabilística que balancea exploración e intensificación, demostrando ser un enfoque simple pero efectivo para el problema de la mochila.
+    Este artículo presenta la aplicación del algoritmo de Optimización Extrema (EO, del inglés Extreme Optimization) para resolver el problema clásico de la mochila. EO es una metaheurística inspirada en el concepto de criticalidad auto-organizada, que se caracteriza por realizar modificaciones probabilísticas extremas en las soluciones. Se implementa una variante que utiliza selección por rango con parámetro de temperatura ($tau$) y una estrategia dual que adapta el comportamiento según la factibilidad de la solución actual. La implementación emplea una inicialización minimalista y un mecanismo de selección probabilística que balancea exploración e intensificación, demostrando ser un enfoque simple pero efectivo para el problema de la mochila.
   ],
   authors: (
     (
@@ -31,11 +35,16 @@
 
 = Introducción
 
-El problema de la mochila es uno de los problemas de optimización combinatorial más estudiados en la literatura científica. Formalmente, consiste en seleccionar un subconjunto de elementos de un conjunto dado, cada uno con un peso y un valor asociado, de manera que se maximice el valor total sin exceder la capacidad de peso de la mochila @dantzig1957.
+El problema de la mochila@kellerer2004 es uno de los problemas de optimización combinatoria más estudiados en la literatura científica. Formalmente, consiste en seleccionar un subconjunto de elementos de un conjunto dado, cada uno con un peso y un valor asociado, de manera que se maximice el valor total sin exceder la capacidad de peso de la mochila @dantzig1957.
+
 
 Este problema pertenece a la clase NP-hard, lo que significa que no existe un algoritmo de tiempo polinomial que garantice encontrar la solución óptima para todas las instancias. Por esta razón, los algoritmos metaheurísticos han ganado popularidad como enfoques efectivos para resolver instancias grandes del problema en tiempo razonable.
 
-La Optimización Extrema (EO) es una metaheurística relativamente nueva propuesta por Boettcher y Percus en 1999 @boettcher1999. Se inspira en el concepto de criticalidad auto-organizada observado en sistemas complejos de la física, donde pequeñas perturbaciones locales pueden llevar a cambios dramáticos en el sistema completo.
+
+Los algoritmos genéticos han sido ampliamente estudiados para variantes de la mochila, como se muestra en @khuri1994 y en el texto clásico de Goldberg @goldberg1989. Por otra parte, la Optimización Extrema (EO) ha sido aplicada exitosamente a distintos problemas combinatorios, incluyendo implementaciones generales @randall2005 y aplicaciones específicas a mochilas multidimensionales @chen2007.
+
+
+La EO es una metaheurística relativamente nueva propuesta por Boettcher y Percus en 1999 @boettcher1999. Se inspira en el concepto de criticalidad auto-organizada @bak1987 observado en sistemas complejos de la física, donde pequeñas perturbaciones locales pueden llevar a cambios dramáticos en el sistema completo.
 
 == Características de EO
 
@@ -45,7 +54,7 @@ EO se diferencia de otros algoritmos evolutivos en varios aspectos fundamentales
 
 2. *Selección extrema*: En cada iteración, se identifica el componente "más malo" de la solución actual y se modifica de manera aleatoria.
 
-3. *No utiliza información de fitness global*: La decisión de qué modificar se basa únicamente en la evaluación local de cada componente.
+3. *No utiliza información de aptitud global*: La decisión de qué modificar se basa únicamente en la evaluación local de cada componente.
 
 4. *Simplicidad conceptual*: El algoritmo requiere pocos parámetros y su implementación es relativamente directa.
 
@@ -87,21 +96,21 @@ El algoritmo implementado adapta los principios de EO específicamente para el p
 
 Cada solución se representa como un vector binario $x = (x_1, x_2, ..., x_n)$ donde $x_i = 1$ si el elemento $i$ está en la mochila y $x_i = 0$ en caso contrario.
 
-=== Función de fitness y selección
+=== Función de aptitud y selección
 
-La implementación utiliza la relación valor/peso ($v_i / w_i$) como medida de calidad para cada elemento. El algoritmo emplea un mecanismo de selección por ruleta biased con un parámetro $tau$ que controla la intensidad de la selección:
+La implementación utiliza la relación valor/peso ($v_i / w_i$) como medida de calidad para cada elemento. El algoritmo emplea un mecanismo de selección por ruleta sesgada con un parámetro $tau$ que controla la intensidad de la selección:
 
 $
   p_k = k^{-tau}
 $ <eq:prob-seleccion>
 
-donde $k$ es el rango del elemento cuando se ordena por su valor de fitness, y $tau$ es el parámetro de temperatura que controla qué tan extrema es la selección. Valores altos de $tau$ favorecen la selección de elementos con peor fitness (más extrema), mientras que valores bajos hacen la selección más uniforme.
+donde $k$ es el rango del elemento cuando se ordena por su valor de aptitud, y $tau$ es el parámetro de temperatura que controla qué tan extrema es la selección. Valores altos de $tau$ favorecen la selección de elementos con peor aptitud (más extrema), mientras que valores bajos hacen la selección más uniforme.
 
 === El parámetro tau y su impacto
 
 El parámetro $tau$ es fundamental en la implementación y controla el balance entre diversificación e intensificación:
 
-- *$tau$ alto (ej. $tau = 2.0$)*: Selección muy extrema, favorece fuertemente elementos con peor fitness. Promueve exploración agresiva.
+- *$tau$ alto (ej. $tau = 2.0$)*: Selección muy extrema, favorece fuertemente elementos con peor aptitud. Promueve exploración agresiva.
 - *$tau$ bajo (ej. $tau = 1.0$)*: Selección moderada, distribución más uniforme de probabilidades. Balance entre exploración y explotación.  
 - *$tau$ muy bajo (ej. $tau = 0.5$)*: Selección casi uniforme, comportamiento más aleatorio.
 
@@ -118,19 +127,19 @@ La elección apropiada de $tau$ depende de las características del problema y d
     + *Salida:* Solución $x = (x_1, x_2, ..., x_n)$
     +
     + Generar solución inicial factible (un elemento aleatorio)
-    + Calcular fitness $f_i = v_i / w_i$ para cada elemento $i$
+    + Calcular aptitud $f_i = v_i / w_i$ para cada elemento $i$
     + $x_"mejor" arrow.l x$ // Guardar mejor solución encontrada
     + *repetir* hasta criterio de parada:
       + *si* solución actual es factible *entonces*
         + // Intentar agregar un elemento (mejorar solución)
         + Obtener elementos no incluidos ($x_i = 0$)
-        + Ordenar por fitness descendente
+        + Ordenar por aptitud descendente
         + Generar vector de probabilidades: $p_k = k^{-tau}$
         + Seleccionar elemento mediante ruleta e incluirlo
       + *sino*
         + // Remover elemento para mantener factibilidad  
         + Obtener elementos incluidos ($x_i = 1$)
-        + Ordenar por fitness ascendente
+        + Ordenar por aptitud ascendente
         + Generar vector de probabilidades: $p_k = k^{-tau}$
         + Seleccionar elemento mediante ruleta y removerlo
       + *fin si*
@@ -160,24 +169,9 @@ Esta estrategia permite al algoritmo mantener un equilibrio dinámico entre expl
 
 == Conjuntos de instancias
 
-El análisis experimental se enfoca exclusivamente en estudiar la sensibilidad del algoritmo EO a tres parámetros: $tau$, la semilla aleatoria y el número máximo de iteraciones. Para ello, se utilizan tres familias de instancias ampliamente empleadas en la literatura:
+El análisis experimental se enfoca exclusivamente en estudiar la sensibilidad del algoritmo EO a tres parámetros: $tau$, la semilla aleatoria y el número máximo de iteraciones. Para ello, se utilizan tres familias de instancias ampliamente empleadas en la literatura @pisinger2005:
 
-#figure(
-  caption: [Conjuntos de instancias considerados],
-  placement: top,
-  table(
-    columns: (auto, auto),
-    align: (left, left),
-    inset: (x: 8pt, y: 4pt),
-    stroke: (x, y) => if y <= 1 { (top: 0.5pt) },
-    fill: (x, y) => if y > 0 and calc.rem(y, 2) == 0 { rgb("#efefef") },
 
-    table.header[Familia][Ruta],
-    [Small Coeff (Pisinger)], [papers/ExtremalOptimization/smallcoeff_pisinger/],
-    [Large Coeff (Pisinger)], [papers/ExtremalOptimization/largecoeff_pisinger/],
-    [Hard Instances (Pisinger)], [papers/ExtremalOptimization/hardinstances_pisinger/],
-  ),
-) <tab:familias>
 
 == Diseño experimental y parámetros
 
@@ -190,88 +184,102 @@ El objetivo es identificar configuraciones de (tau, seed, iteraciones) que ofrec
 Métricas reportadas por instancia y luego agregadas por familia:
 
 - Tasa de óptimo: proporción de instancias con diferencia 0.
+- Ratio Promedio: Medida de calidad definida como el cociente entre el mejor valor encontrado y el óptimo conocido ($v_"best" / v_"opt"$). Un valor de 1.0 indica que se alcanzó el óptimo.
 - Error absoluto promedio: promedio de precio_mejor - precio_óptimo.
 - Iteraciones hasta el mejor: número de iteraciones consumidas al lograr la mejor solución.
 
 == Ejecución y recolección de resultados
 
-La recolección de datos se realiza ejecutando el comando CLI existente (sin cambios a la implementación). A modo de ejemplo, el siguiente comando ejecuta EO sobre un conjunto de instancias y genera un CSV en la carpeta `papers`:
+La recolección de datos se realizó ejecutando el algoritmo sobre los tres conjuntos de instancias (Small, Large y Hard) variando los parámetros de interés. Los resultados crudos, que incluyen el mejor valor encontrado, el óptimo conocido y las iteraciones utilizadas, se almacenaron en archivos CSV para su posterior procesamiento.
 
-#figure(
-  box(fill: rgb("#f7f7f7"), inset: 8pt, stroke: rgb("#dddddd"), radius: 4pt, [
-    python -m src.main eo -s --output="./papers" "smallcoeff_pisinger\\knapPI_1_50_1000.csv" 3000 4534 1.6
-  ]),
-  caption: [Comando de ejemplo para generar resultados (CSV)],
-  placement: top,
-) <fig:comando>
+En el análisis posterior, estos resultados se agregaron por familia y por combinación de parámetros para estimar la tasa de óptimo, el error promedio y la estabilidad respecto de la semilla. Los mejores valores de (tau, seed, iteraciones) para cada familia se reportan con sus métricas agregadas.
 
-== Resultados de ejemplo
+== Análisis de convergencia y desempeño
 
-Como ejemplo de salida, se emplea el archivo `papers/result_eo_n50_c995_tau1.6_seed4534.csv`, que contiene los campos: Instancia, Iteraciones, Items, Capacidad, Precio Mejor Solución, Precio Solución Óptima y Diferencia. A continuación, se muestra un extracto:
+A continuación se presentan los gráficos de evolución del ratio promedio (calidad) respecto a las iteraciones reales promedio consumidas, para diferentes valores de $tau$.
 
-#figure(
-  caption: [Extracto de resultados generados por EO con $tau=1.6$, seed=4534, 3000 iteraciones],
-  placement: top,
-  table(
-    columns: (auto, auto, auto, auto, auto, auto, auto),
-    align: (left, center, center, center, center, center, center),
-    inset: (x: 6pt, y: 4pt),
-    stroke: (x, y) => if y <= 1 { (top: 0.5pt) },
-    fill: (x, y) => if y > 0 and calc.rem(y, 2) == 0 { rgb("#efefef") },
+#let plot_ratio_iter(data_path, title_text, x_step: 1000, show_marks: false) = {
+  let raw_data = csv(data_path)
+  // Skip header
+  let data = raw_data.slice(1)
+  // Columns: tau(0), max_iterations(1), mean_ratio(2), std_ratio(3), mean_gap(4), mean_iterations_used(5), ...
+  
+  // Filter unique taus for legend
+  let taus = ()
+  for row in data {
+    let t = row.at(0)
+    if not taus.contains(t) { taus.push(t) }
+  }
+  taus = taus.sorted()
 
-    table.header[Instancia][Iter.][Items][Cap.][Mejor][Óptimo][Dif.],
-    [knapPI_1_50_1000_1], [50], [50], [995], [8373], [8373], [0],
-    [knapPI_1_50_1000_2], [30], [50], [997], [5847], [5847], [0],
-    [knapPI_1_50_1000_11], [829], [50], [2397], [9533], [9533], [0],
-    [knapPI_1_50_1000_22], [3000], [50], [5241], [12837], [12839], [-2],
-    [knapPI_1_50_1000_36], [3000], [50], [9462], [13513], [13517], [-4],
-    [knapPI_1_50_1000_38], [3000], [50], [8297], [17760], [17772], [-12],
-  ),
-) <tab:ejemplo>
+  figure(
+    cetz.canvas({
+      plot.plot(
+        size: (5, 3.5),
+        x-tick-step: x_step,
+        x-label: "Iteraciones Promedio",
+        y-label: "Ratio Promedio (Mejor/Óptimo)",
+        title: title_text,
+        legend: "inner-south-east",
+        y-min: 0.99, y-max: 1.0005, // Zoom to high quality area
+        {
+          let colors = (red, blue, green, orange, purple, black)
+          for (i, t) in taus.enumerate() {
+             let series = data.filter(r => r.at(0) == t).map(r => (float(r.at(5)), float(r.at(2))))
+             // Sort by iterations to draw line correctly
+             series = series.sorted(key: x => x.at(0))
+             plot.add(series, label: "tau=" + t, mark: if show_marks {"o"} else {none}, mark-size: 0.05, style: (stroke: colors.at(calc.rem(i, colors.len()))))
+          }
+        }
+      )
+    }),
+    caption: [Evolución de calidad vs costo real para ] + title_text
+  )
+}
 
-// Lectura dinámica del CSV de ejemplo y visualización compacta
-#let datos_ej = csv("./result_eo_n50_c995_tau1.6_seed4534.csv")
-#let encabezados_ej = (
-  "Instancia", "Iteraciones", "Items", "Capacidad",
-  "Precio Mejor Solucion", "Precio Solucion Optima", "Diferencia",
-)
-#let filas_ej = datos_ej.slice(0, 6)
+#plot_ratio_iter("agg_small.csv", "Instancias Small")
+#plot_ratio_iter("agg_large.csv", "Instancias Large")
+#plot_ratio_iter("agg_hard.csv", "Instancias Hard", x_step: 50, show_marks: true)
 
-#figure(
-  caption: [CSV leído dinámicamente (primeras 6 filas)],
-  placement: top,
-  table(
-    columns: (auto, auto, auto, auto, auto, auto, auto),
-    align: (left, center, center, center, center, center, center),
-    inset: (x: 6pt, y: 4pt),
-    stroke: (x, y) => if y <= 1 { (top: 0.5pt) },
-    fill: (x, y) => if y > 0 and calc.rem(y, 2) == 0 { rgb("#efefef") },
-    table.header[..encabezados_ej],
-    for r in filas_ej {
-      [r.at("Instancia")]
-      [r.at("Iteraciones")]
-      [r.at("Items")]
-      [r.at("Capacidad")]
-      [r.at("Precio Mejor Solucion")]
-      [r.at("Precio Solucion Optima")]
-      [r.at("Diferencia")]
-    },
-  ),
-)
 
-En el análisis completo, estos CSVs se agregan por familia y por combinación de parámetros para estimar la tasa de óptimo, el error promedio y la estabilidad respecto de la semilla. Los mejores valores de (tau, seed, iteraciones) para cada familia se reportan con sus métricas agregadas.
 
-== Análisis de convergencia
+== Análisis de variabilidad
 
-#figure(
-  rect(width: 200pt, height: 120pt, stroke: black, [
-    #align(center + horizon)[Gráfico de convergencia\n(Placeholder)]
-  ]),
-  caption: [Curva de convergencia típica del algoritmo EO para la instancia KS-100],
-  placement: top,
-) <fig:convergencia>
+Para complementar el análisis de promedios, se presenta la distribución de la calidad de las soluciones (Ratio) para diferentes valores de $tau$, utilizando diagramas de caja simplificados (min, Q1, mediana, Q3, max). Esto permite visualizar la estabilidad del algoritmo.
 
-La @fig:convergencia muestra el comportamiento típico de convergencia del algoritmo, observándose una mejora rápida inicial seguida de un refinamiento gradual de la solución.
+#let boxplot_graph(data_path, title_text) = {
+  let raw_data = csv(data_path)
+  let data = raw_data.slice(1)
+  // Columns: tau(0), min(1), q1(2), median(3), q3(4), max(5)
+
+  figure(
+    cetz.canvas({
+      plot.plot(
+        size: (5, 3.5),
+        x-label: "Tau",
+        y-label: "Ratio (Calidad)",
+        title: title_text,
+        y-min: 0.0, y-max: 1.05,
+        {
+           let formatted_data = data.map(row => (
+             x: float(row.at(0)), 
+             min: float(row.at(1)), 
+             q1: float(row.at(2)), 
+             q2: float(row.at(3)), 
+             q3: float(row.at(4)), 
+             max: float(row.at(5))
+           ))
+           plot.add-boxwhisker(formatted_data, box-width: 0.15)
+        }
+      )
+    }),
+    caption: [Distribución de calidad vs Tau para ] + title_text
+  )
+}
+
+#boxplot_graph("box_small.csv", "Instancias Small (1000 iter)")
+#boxplot_graph("box_large.csv", "Instancias Large (1000 iter)")
+#boxplot_graph("box_hard.csv", "Instancias Hard (500 iter)")
 
 = Discusión
 
@@ -289,10 +297,27 @@ El estudio de sensibilidad de parámetros resalta que:
 
 Se reorientó el experimento para caracterizar el impacto de (tau, seed, iteraciones) en el desempeño de EO en tres familias de instancias (Small Coeff, Large Coeff y Hard). Este enfoque permite seleccionar configuraciones efectivas y estables sin comparar contra otros algoritmos.
 
-A partir de los resultados, recomendamos:
+A partir de los resultados y el análisis de iteraciones, se concluye:
 
-1. Explorar $tau$ en un rango moderado (1.0–2.0), afinando por familia.
-2. Evaluar múltiples semillas y reportar promedios y desviaciones.
-3. Ajustar el presupuesto de iteraciones según la dificultad de la familia.
+- *Small*: Al analizar las iteraciones, se observa que configuraciones con $tau$ alto (1.8-2.0) logran ratios $>99.9%$ convergiendo a menudo antes del límite de iteraciones. La recomendación eficiente apunta a $tau=1.8$ con un límite de 1000 iteraciones, donde el promedio de iteraciones es bajo pero la calidad es muy alta.
+- *Large*: Similarmente, $tau=1.6$ muestra un excelente balance. Aunque se configure un `max_iterations` alto (e.g. 5000), el análisis de iteraciones muestra el costo verdadero. Para eficiencia, $tau=1.6$ con `max_iterations=1000` es suficiente para estar en el rango del 99.5% del óptimo.
+- *Hard*: El costo en iteraciones es muy bajo ($approx 118$) e independiente del `max_iterations` configurado, ya que el algoritmo encuentra el óptimo rápidamente. $tau=1.8$ minimiza consistentemente este número de iteraciones.
 
-Como trabajo futuro se propone automatizar la agregación de CSVs por familia para generar tablas de tasa de óptimo, error promedio e iteraciones al mejor, y extender el análisis a variantes multidimensionales del problema.
+== Recomendaciones Sintéticas
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto, auto),
+    align: (left, center, center, center, left),
+    inset: 5pt,
+    table.header([*Tipo*], [*tau*], [*max_iter (param)*], [*Iteraciones*], [*Justificación*]),
+    [Small], [1.8], [1000], [~1000], [Alta eficiencia y calidad],
+    [Large], [1.6], [1000], [~1000], [Buen balance costo/calidad],
+    [Hard],  [1.8], [500],  [~118],  [Convergencia más rápida al óptimo],
+  ),
+  caption: [Recomendación de parámetros basada en eficiencia]
+)
+
+El uso de *iteraciones* como métrica de costo confirma que no es necesario sobre-dimensionar `max_iterations` para obtener resultados de alta calidad en estos conjuntos de datos.
+
+Como trabajo futuro se propone extender el análisis a variantes multidimensionales del problema y evaluar el impacto del tiempo de cómputo (tiempo real de ejecución).
